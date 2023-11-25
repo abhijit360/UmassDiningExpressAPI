@@ -8,7 +8,8 @@ const SB = createClient(process.env.API_URL, process.env.api_KEY);
 function displayRoutes(req, res, next) {
   const APIroutes = {
     "/UmassDiningApi/": "displays all routes",
-    "/UmassDiningApi/DC=?": "displays all stations and meal timings available today",
+    "/UmassDiningApi/DC=?":
+      "displays all stations and meal timings available today",
     "/UmassDiningApi/DiningCommon_name/station_name/meal_time":
       "displays all the food items served at the station at that specific meal time",
     "/UmassDiningApi/DishName": "displays the meta data for dishname",
@@ -56,11 +57,90 @@ async function displayDC(req, res, next) {
   }
 }
 
+async function displayDishes(req, res) {
+  const DiningCommons = ["worcester", "berkshire", "frank", "hampshire"];
+  const DC = req.params.DC;
+  const STN = req.params.stn;
+  const MEAL_TIME = req.params.meal_time;
+  const today = getDate();
+  // check if DC is valid
+  if (!isNaN(Number(DC))) {
+    res.status(400).json({
+      error:
+        "DC only takes the following values: worcester, berkshire, frank, hampshire",
+    });
+  } else if (DiningCommons.indexOf(DC.toLowerCase()) === -1) {
+    res.status(400).json({
+      error:
+        "DC only takes the following values: worcester, berkshire, frank, hampshire",
+    });
+  } 
+  
+  let { data, error } = await SB.rpc("get_dishes", {
+    dc: DC,
+    mealtime: MEAL_TIME,
+    stn: STN,
+    today: today,
+  });
+
+  if (error) {
+    res.status(500).json({ error: "Server side error" });
+  } else {
+    res.status(200).json({
+      message: "running",
+      station_data: data,
+    });
+  }
+
+
+}
+
+async function getDish(req, res) {
+    const DiningCommons = ["worcester", "berkshire", "frank", "hampshire"];
+  const DC = req.params.DC;
+  const STN = req.params.stn;
+  const MEAL_TIME = req.params.meal_time;
+  const today = getDate();
+  const DISH_NAME = req.params.DishName;
+  // check if DC is valid
+  if (!isNaN(Number(DC))) {
+    res.status(400).json({
+      error:
+        "DC only takes the following values: worcester, berkshire, frank, hampshire",
+    });
+  } else if (DiningCommons.indexOf(DC.toLowerCase()) === -1) {
+    res.status(400).json({
+      error:
+        "DC only takes the following values: worcester, berkshire, frank, hampshire",
+    });
+  } 
+  
+  let { data, error } = await SB.rpc("get_dishmeta", {
+    dc: DC,
+    dishname: DISH_NAME,
+    mealtime: MEAL_TIME,
+    stn: STN,
+    today: today,
+    
+  });
+
+  if (error) {
+    res.status(500).json({ error: "Server side error" });
+  } else {
+    res.status(200).json({
+      message: "running",
+      station_data: data,
+    });
+  }
+
+  }
+
 
 
 app.get("/UMassDiningApi/", displayRoutes);
 app.get("/UMassDiningApi/:DC", displayDC);
-app.get("/UMassDiningAPI/:DC/:stn/:meal_time",'');
+app.get("/UMassDiningAPI/:DC/:stn/:meal_time", displayDishes);
+app.get("/UmassDiningApi/:DC/:stn/:meal_time/:DishName", getDish);
 
 app.listen(5000, () => {
   console.log(`server running on ${5000}`);
