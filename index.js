@@ -2,8 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const { createClient } = require("@supabase/supabase-js");
 
+console.log(process.env.API_KEY);
+console.log(process.env.API_URL);
 const app = express();
-const SB = createClient(process.env.API_URL, process.env.api_KEY);
+const SB = createClient(process.env.API_URL, process.env.API_KEY);
 
 function displayRoutes(req, res, next) {
   const APIroutes = {
