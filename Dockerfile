@@ -12,7 +12,7 @@ RUN npm install
 # bundle the app source
 COPY . .
 
-ENV PORT=5000
+# ENV PORT=5000
 
 EXPOSE 5000
 

@@ -87,7 +87,6 @@ async function displayDishes(req, res) {
     res.status(500).json({ error: "Server side error" });
   } else {
     res.status(200).json({
-      message: "running",
       station_data: data,
     });
   }
@@ -128,7 +127,6 @@ async function getDish(req, res) {
     res.status(500).json({ error: "Server side error" });
   } else {
     res.status(200).json({
-      message: "running",
       station_data: data,
     });
   }
