@@ -22,7 +22,7 @@ function getDate() {
   const today_day = today.getUTCDate();
   const today_month = today.getMonth();
   const today_year = today.getFullYear();
-  return `${today_year}-${today_month + 1}-${today_day}`;
+  return `${today_year}-${today_month + 1}-${today_day -1}`;
 }
 
 async function displayDC(req, res, next) {
